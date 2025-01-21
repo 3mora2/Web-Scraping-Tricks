@@ -1,6 +1,6 @@
 # Web-Scraping-Tricks
 
-### Scrap Category
+### Collect Category
 #### Problem:
 intertwined and interconnected elements
 #### solution
