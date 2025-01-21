@@ -39,6 +39,9 @@ for main_category in soup.select('ul.main-menu>li[class="lg:hidden text-sm font-
             categories_id[eval(sub_subcategory.attrs.get("id"))] = [main_category_name, subcategory_name, sub_subcategory_name]
 
 ```
+<details>
+  <summary>Output</summary>
+    
 ```
 {
    "لكزس":{
@@ -516,3 +519,4 @@ for main_category in soup.select('ul.main-menu>li[class="lg:hidden text-sm font-
    }
 }
 ```
+</details>
