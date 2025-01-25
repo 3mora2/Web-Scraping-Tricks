@@ -520,3 +520,56 @@ for main_category in soup.select('ul.main-menu>li[class="lg:hidden text-sm font-
 }
 ```
 </details>
+
+### nodriver/zendriver
+
+#### wait_for_element
+```python
+async def wait_for_element(page, selector, timeout=30000):
+    try:
+        element = await page.wait_for(selector, timeout=timeout)
+        return element
+    except asyncio.TimeoutError:
+        raise Exception(f"Timeout waiting for element: {selector}")
+    except Exception as e:
+        raise Exception(f"Error finding element {selector}: {str(e)}")
+```
+
+#### listen to requests
+```python
+        await page.evaluate("""
+            window.requests = [];
+            const originalFetch = window.fetch;
+            window.fetch = function() {
+                return new Promise((resolve, reject) => {
+                    originalFetch.apply(this, arguments)
+                        .then(response => {
+                            window.requests.push({
+                                url: response.url,
+                                status: response.status,
+                                headers: Object.fromEntries(response.headers.entries())
+                            });
+                            resolve(response);
+                        })
+                        .catch(reject);
+                });
+            };
+        """)
+```
+
+#### check requests
+
+```python
+async def wait_for_token(page, max_attempts=10, check_interval=0.5):
+    for _ in range(max_attempts):
+        requests = await page.evaluate("window.requests")
+        for req in requests:
+            if "api.spotifydown.com/download" in req['url']:
+                token_match = re.search(r'token=(.+)$', req['url'])
+                if token_match:
+                    return token_match.group(1)
+        await asyncio.sleep(check_interval)
+    raise Exception("Token not found within timeout period")
+
+page = await browser.get("https://spotifydown.com/en")
+```
