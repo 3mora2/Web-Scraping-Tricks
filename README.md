@@ -573,3 +573,12 @@ async def wait_for_token(page, max_attempts=10, check_interval=0.5):
 
 page = await browser.get("https://spotifydown.com/en")
 ```
+
+#### request status code
+```python
+    page = await browser.get("https://httpstat.us/404")
+    status_code: int = await page.evaluate(
+        'window.performance.getEntries().find(e => e.entryType === "navigation").responseStatus'
+    )
+    print(status_code)  # 404
+```
