@@ -582,3 +582,35 @@ page = await browser.get("https://spotifydown.com/en")
     )
     print(status_code)  # 404
 ```
+
+#### request, response listen
+
+```python
+import asyncio
+import zendriver as zd
+
+async def request_handler(event: zd.cdp.network.RequestWillBeSent):
+    print(f"Request URL: {event.request.url}")
+    print(f"Method: {event.request.method}")
+    print(f"Headers: {event.request.headers}")
+
+async def response_handler(event: zd.cdp.network.ResponseReceived):
+    print(f"Response URL: {event.response.url}")
+    print(f"Status: {event.response.status}")
+    print(f"Headers: {event.response.headers}")
+
+async def main():
+        async with await zd.start(
+                headless=False,
+        ) as browser:
+            page = await browser.get()
+
+            page.add_handler(zd.cdp.network.RequestWillBeSent, request_handler)
+            page.add_handler(zd.cdp.network.ResponseReceived, response_handler)
+
+            await page.get(f'https://translate.google.com/')
+            await page.get(f'https://translate.google.com/?hl=ar&eotf=0&sl=auto&tl=ar&op=images')
+
+
+asyncio.run(main())
+```
